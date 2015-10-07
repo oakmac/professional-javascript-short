@@ -1,0 +1,980 @@
+<!doctype html>
+<html>
+<head>
+  <title>Professional JavaScript, September 2013 - Chris Oakman</title>
+  <meta charset='utf-8'>
+  <!-- <script src='http://html5slides.googlecode.com/svn/trunk/slides.js'></script> -->
+  <script src="js/slides.js"></script>
+  <style>
+  /* remove the Google logo */
+    article {
+    background: #fff !important;
+  }
+  .string {
+    color: #008A35;
+  }
+  .small2 {
+    font-size: 18px !important;
+  }
+  .further-reading img {
+    height: 80px;
+    vertical-align: middle;
+
+  }
+  </style> 
+</head>
+<body style='display: none'>
+<section class='slides layout-regular template-default'>
+
+
+<article>
+<h1>Professional JavaScript</h1>
+<p>Chris Oakman
+  <br />
+  September 2013
+</p>
+</article>
+
+
+<article>
+<h3>Overview</h3>
+<ul>
+  <li>JavaScript 101
+  <li>Tips from the Trenches
+  <li>Further Reading
+  <li>Q&amp;A
+</ul>
+</article>
+
+
+<article>
+<h3>Goal</h3>
+<p>The target audience for this talk are people who write JavaScript professionally.</p>
+<p>My goal is to find the sweet spot between practice and theory.</p>
+<img src="img/sweet_spot.png" alt="Sweet Spot" class='centered' />
+</article>
+
+
+<article>
+<h1>JavaScript 101</h1>
+</article>
+
+
+<article>
+<h3>What is JavaScript?</h3>
+<ul>
+  <li>Interpreted (as opposed to compiled)
+  <li>Dynamically typed (as opposed to static)
+  <li>Prototype-based
+  <li>Functions are first-class
+</ul>
+</article>
+
+
+<article>
+<h3>Lesson 1 - Simple Types</h3>
+<p>The simple types in JavaScript are:</p>
+<ul>
+  <li>Numbers
+  <li>Strings
+  <li>Boolean
+  <li>null
+  <li>undefined
+</ul>
+</article>
+
+
+<article class="smaller">
+<h3>L01E01 - Simple Types: Numbers</h3>
+<p>JavaScript has only one number type.</p>
+<pre style="margin-top: 30px">
+// numbers
+var num1 = 96;
+var num2 = 2.5;
+var num3 = 1e3; // 1000
+
+if (1 === 1.0) { // true
+  console.log('every number is a 64-bit floating point');
+}
+
+if (1000 === num3) { // true
+  console.log('one thousand');
+}
+
+// beware of floating point operations in JavaScript
+if (0.1 + 0.2 === 0.3) { // false
+  console.log('Pigs are flying.');
+}
+
+// convert to integers if needed
+if (0.1 * 1000 + 0.2 * 1000 === 0.3 * 1000) { // true
+  console.log('Integers are generally safe.');
+}
+</pre>
+</article>
+
+
+<article>
+<h3>L01E02 - Simple Types: Strings</h3>
+<section>
+<pre>
+// strings
+var str1 = 'Hello';  // single quotes
+var str2 = "world!"; // double quotes
+
+console.log(str1 + ' ' + str2); // "Hello world!"
+
+// strings have a length property
+console.log( str1.length ); // 5
+
+// strings have built-in methods
+console.log( str1.toUpperCase() ); // "HELLO"
+
+console.log( str1.indexOf("e") ); // 1
+console.log( str1.indexOf("z") ); // -1 (z not found)
+
+console.log( str1.substr(3, 2) ); // "lo"
+
+// NOTE: JavaScript does not have chars, only strings
+</pre>
+</section>
+</article>      
+
+
+<article>
+<h3>L01E03 - Simple Types: Boolean, null, undefined</h3>
+<section>
+<pre>
+// boolean
+var yup  = true;
+var nope = false;
+
+// null
+var never = null;
+
+// undefined is lack of assignment
+var huh;
+console.log(huh); // undefined
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>Lesson 2 - Objects</h3>
+<div style="margin-top: 40px">Everything else in JavaScript is an Object.</div>
+<div class="build">
+  <p style="margin-top: 20px">(yes, everything)</p>
+  <div style="margin-top: 20px">
+  <table>
+  <tr>
+    <th colspan="2" style="text-align: center; width: 50%">Simple Types
+    <th colspan="2" style="text-align: center; width: 50%">Objects
+  <tr>
+    <td>Numbers
+    <td><code>9</code>
+    <td>Objects
+    <td><code>{}</code>
+  <tr>
+    <td>Strings
+    <td><code class="string">"hello"</code>
+    <td>Arrays
+    <td><code>[]</code>
+  <tr>
+    <td>Boolean
+    <td><code class="blue">true</code>
+    <td>Functions
+    <td><code>function() {}</code>
+  <tr>
+    <td>null
+    <td><code class="blue">null</code>
+    <td>Regular<br />Expressions
+    <td><code class="string">/foo/i</code>
+  <tr>
+    <td>undefined
+    <td><code class="blue">undefined</code>
+    <td>
+    <td>
+  </table>
+  </div>
+  <p>Numbers, Strings, and Booleans are object-like.</p>
+</div><!-- end .build -->
+</article>
+
+
+<article class="smaller">
+<h3>L02E01 - Objects: Basic Syntax</h3>
+<section>
+<pre>
+// this is an empty object; it has no properties
+var empty = {};
+
+// object with three properties: name, height-in-m, type
+var monster = {
+  name : "King Kong",
+  "height-in-m" : 42,
+  type : "gorilla"
+};
+
+console.log(monster.name); // "King Kong" (dot notation)
+console.log(monster['name']); // "King Kong" (bracket notation)
+console.log(monster["name"]); // "King Kong" (bracket notation)
+
+// "King Kong is a gorilla"
+console.log(monster.name + " is a " + monster.type);
+
+// change the value of monster.type
+monster.type = 'giant gorilla';
+
+// "King Kong is a 42m tall giant gorilla"
+console.log(monster.name + " is a " + monster["height-in-m"]
+            + "m tall " + monster.type);
+
+// NOTE: dot notation is preferred over bracket notation where possible
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L02E02 - Objects: Nesting</h3>
+<section>
+<pre>
+// a property's value can be obtained from any expression,
+// including other objects
+var me = {
+  name : {
+    first : "Chris",
+    last : "Oakman"
+  },
+  location : {
+    name : "Houston, TX",
+    lat : 29.75961,
+    lng : -95.36270
+  }
+};
+
+// "Chris Oakman"
+console.log(me.name.first + " " + me.name.last);
+
+// NOTE: nested objects are a powerful way to represent data
+//       more on this when we get into the DOM
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L02E03 - Objects: Arrays</h3>
+<section>
+<pre style="margin-top: 30px">
+// this is an empty array
+var arr1 = [];
+
+// array with several values
+// NOTE: trailing commas are not allowed
+var arr2 = ["alpha", "bravo", "charlie"];
+
+// arrays are zero-indexed
+console.log( arr2[1] ); // "bravo"
+
+// arrays can contain values of multiple types
+var arr3 = [0, 1, "two", "three", 4, { num : 5 }];
+console.log( arr3[2] ); // "two"
+console.log( arr3[5].num ); // 5
+
+// arrays come with the .length property
+console.log( arr3.length ); // 6
+
+// .push method
+arr3.push("six"); // adds the string "six" to the end of arr3
+
+// .join method
+console.log( arr2.join("-") ); // "alpha-bravo-charlie"
+
+// arrays can be the value of an object property
+var obj1 = {
+  cities : ["Austin", "Dallas", "Houston"]
+};
+</pre>
+</section>
+</article>
+    
+
+<article class="smaller">
+<h3>Misc - JSON</h3>
+<ul>
+  <li>JSON stands for <strong>J</strong>ava<strong>S</strong>cript <strong>O</strong>bject <strong>N</strong>otation
+  <li>JSON is a subset of JavaScript syntax (ie: more restrictive syntax)
+  <li>All property names must be in double quotes
+  <li>Great interchange format; prefer it over XML in basically every instance
+  <li><strong>Always</strong> parse JSON, never <code>eval()</code>
+</ul>
+<section>
+<div style="float: left; width: 50%; margin-right: 15px;">
+<pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;pets&gt;
+  &lt;pet name="Mack" type="cat" /&gt;
+  &lt;pet name="Simon" type="cat" /&gt;
+  &lt;pet name="Sophie" type="dog" /&gt;
+&lt;/pets&gt;
+</pre>
+</div>
+<div style="float: left; width: 45%;">
+<pre>
+{
+  "pets" : [
+    {
+      "name" : "Mack",
+      "type" : "cat"
+    },
+    {
+      "name" : "Simon",
+      "type" : "cat"
+    },
+    {
+      "name" : "Sophie",
+      "type" : "dog"
+    }
+  ]
+}
+</pre>
+</div>
+<div style="clear: both"></div>
+</section>
+</article>
+
+
+<article>
+<h3>L02E04 - Objects: Regular Expressions</h3>
+<section>
+<pre>
+// JavaScript has regular expressions
+var str1 = "Foo Bar";
+var regex = /foo/i;
+
+// NOTE: "replace" is a method of every String
+var str2 = str1.replace(regex, "Bar");
+
+console.log( str2 ); // "Bar Bar"
+
+// Regular Expressions are a powerful tool
+// learn them, use them, don't over-use them
+</pre>
+</section>
+</article>
+
+
+<article>
+<h3>Lesson 3 - Functions</h3>
+<ul>
+  <li>Fundamental modular unit of JavaScript
+  <li>Functions are objects
+  <li>Function execute within the scope of an object
+</ul>
+<div class="build">
+  <div>
+    <q style="font-size:38px; line-height: 48px; margin-top: 88px">It is better to have 100 functions operate on one data structure than to have 10 functions operate on 10 data structures.</q>
+    <div class="author">Alan J. Perlis</div>
+  </div>
+</div><!-- end .build -->
+</article>
+
+
+<article class="smaller">
+<h3>L03E01 - Functions: Basics</h3>
+<section>
+<pre>
+// a simple function
+function add1(a, b) {
+  return a + b;
+};
+
+// another way of writing the same function
+var add2 = function(a, b) {
+  return a + b;
+};
+
+// execute a function with ()
+var result = add2(3, 2); 
+console.log( result ); // 5
+
+// functions can be the value of an object property
+// when this happens they are often called "methods"
+var obj1 = {
+  add : add2,
+  subtract : function(a, b) {
+    return a - b;
+  }
+};
+
+console.log( obj1.add(3, 2) ); // 5
+console.log( obj1.subtract(3, 2) ); // 1
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L03E02 - Functions: Variable Scope</h3>
+<section>
+<pre>
+var a = "apple";
+var func1 = function() {
+  // inner methods have access to outside variables
+  // this function has access to variable "a"
+  
+  a = "apricot"; // change the value of "a"
+  console.log(a);
+};
+console.log(a); // "apple"
+func1();        // "apricot"
+console.log(a); // "apricot" (the value of "a" was changed inside func1)
+
+
+var b = "banana";
+var func2 = function() {
+  // define variable "b" inside this function
+  // completely separate from the "b" defined outside the function
+  var b = "blueberry";
+  console.log(b);
+};
+console.log(b); // "banana"
+func2();        // "blueberry"
+console.log(b); // "banana"
+</pre>
+</section>
+</article>
+
+
+
+<article class="smaller">
+<h3>L03E03 - Functions: Closure</h3>
+<section>
+<pre>
+var counter = (function() {
+
+  // variable "count" is defined inside our function
+  var count = 0;
+  
+  // we return an object with three properties
+  // each property is a function that has access to the "count" variable
+  return {
+    up    : function() { count++; },
+    down  : function() { count--; },
+    value : function() { return count; }
+  };
+  
+})(); // execute the function immediately, which returns an object
+
+console.log( counter.value() ); // 0
+for (var i = 0; i &lt; 6; i++) { // increment 6 times
+  counter.up();
+}
+console.log( counter.value() ); // 6
+counter.down();
+console.log( counter.value() ); // 5
+
+// the "count" variable exists in memory, but we do not have direct access to it
+// this is called closure
+</pre>
+</section>
+</article>
+
+
+<article class="">
+<h3>L03E04 - Functions: Execution Context</h3>
+<ul>
+  <li>All functions execute within the scope of an object.
+  <li>The keyword <code class="blue">this</code> refers to the object that the function is executing in
+</ul>
+</article>
+
+
+<article class="smaller">
+<h3>L03E04 - Functions: Execution Context <small>(cont.)</small></h3>
+<section>
+<pre style="margin-top: 20px">
+function printThis() {
+  console.log( this.foo );
+}
+
+var obj1 = {
+  foo     : "Level 1",
+  printMe : printThis,
+  child : {
+    foo     : "Level 2",
+    printMe : printThis
+  }
+};
+
+// executing in the scope of the global object (window)
+printThis(); // undefined because window.foo does not exist
+
+// executing in the scope of obj1
+obj1.printMe(); // "Level 1"
+
+// executing in the scope of obj1.child
+obj1.child.printMe(); // "Level 2"
+
+// executing obj1.child.printMe in the scope of obj1
+obj1.child.printMe.apply(obj1); // "Level 1"
+
+// executing printThis in the scope of a new object
+printThis.apply( { foo : "Inception!" } ); // "Inception!"
+</pre>
+</section>
+</article>
+
+
+<article>
+<h3>Lesson 4 - Object Inheritance</h3>
+<ul>
+  <li>All objects are linked to a prototype object
+  <li>When accessing a property on an object, JS will look up the prototype chain until it tops out at <code>Object.prototype</code>
+</ul>
+</article>
+
+
+<article class="smaller">
+<h3>L04E01 - Basic .prototype Usage</h3>
+<section>
+<pre>
+// create an empty object, it inherits from Object.prototype
+var obj1 = {};
+console.log( obj1.foo ); // undefined - property "foo" does not exist on
+                         //             either obj1 or it's prototype
+
+// add foo to Object.prototype
+Object.prototype.foo = "bar";
+console.log( obj1.foo ); // "bar" - property "foo" does not exist on obj1,
+                         //         but was found on it's prototype
+
+// add "foo" to obj1 directly
+obj1.foo = "ZZZ";
+console.log( obj1.foo ); // "ZZZ" - property "foo" is directly on the object,
+                         //         we don't look up the prototype chain
+
+// remove "foo" from obj1
+delete obj1.foo;
+console.log( obj1.foo ); // "bar" - property "foo" does not exist on obj1,
+                         //         but was found on it's prototype
+
+// remove "foo" from Object.prototype
+delete Object.prototype.foo;
+console.log( obj1.foo ); // undefined - property "foo" does not exist on
+                         //             either obj1 or it's prototype
+
+// NOTE: don't modify Object.prototype in practice; this is only for example
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L04E01 - Basic .prototype Usage <small>(cont.)</small></h3>
+<section>
+<pre>
+var obj1 = {};
+var obj2 = {};
+console.log( obj1.foo ); // undefined
+console.log( obj2.foo ); // undefined
+
+Object.prototype.foo = "bar";
+console.log( obj1.foo ); // "bar"
+console.log( obj2.foo ); // "bar"
+
+obj1.foo = "ZZZ";
+console.log( obj1.foo ); // "ZZZ"
+console.log( obj2.foo ); // "bar"
+
+delete Object.prototype.foo;
+console.log( obj1.foo ); // "ZZZ"
+console.log( obj2.foo ); // undefined
+
+// NOTE: don't modify Object.prototype in practice; this is only for example
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L04E02 - Constuctor Functions</h3>
+<section>
+<pre>
+// circle Constructor
+function Circle(radius) {
+  // use a default radius if the one provided is not valid
+  if (typeof radius !== 'number' || radius &lt; 0) {
+    radius = 5;
+  }
+  
+  // assign the radius to this object's context (ie: this)
+  this.radius = radius;
+}
+
+// calculate area
+Circle.prototype.area = function() {
+  return Math.PI * this.radius * this.radius;
+};
+
+var c1 = new Circle(8);
+console.log( c1.radius ); // 8
+console.log( c1.area() ); // 201.062
+
+var c2 = new Circle();  // use the default radius
+console.log( c2.radius ); // 5
+console.log( c2.area() ); // 78.540
+
+// NOTE: the .area function only exists in memory once no matter how many
+//       Circle objects we create because it exists on the prototype
+</pre>
+</section>
+</article>
+
+
+<article>
+<h3>Lesson 5 - The Browser</h3>
+<ul>
+  <li>The browser gives us a context to execute JavaScript on
+  <li>It exposes global objects for us to use
+  <li>A DOM structure of the underlying HTML
+  <li>Events for us to hook into
+</ul>
+</article>
+
+
+<article class="smaller">
+<h3>L05E01 - Browser Context</h3>
+<ul>
+  <li>Browser gives us several global objects to work with
+  <li>The global object is <code>window</code>
+  <li><code>window.document</code> is the start of the DOM tree
+  <li>There are many others; check documentation
+  <li>Browser objects are inconsistent; use a library
+</ul>
+<section>
+<pre>
+// these three lines all do the same thing
+foo = "bar";        // no "var" declaration, so it bubbles up to the global object
+this.foo = "bar";   // "this" is the global object
+window.foo = "bar"; // "window" is the global object
+
+// NOTE: don't this in practice
+
+// the best way to establish a global is:
+window.MYAPP = window.MYAPP || {};
+</pre>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L05E02 - What is the DOM?</h3>
+<ul>
+  <li>The DOM is what it sounds like: <strong>D</strong>ocument <strong>O</strong>bject <strong>M</strong>odel
+  <li>It's the browser exposing the underlying document structure through JavaScript objects
+</ul>
+<section>
+<div style="float: left; width: 35%; margin-right: 15px;">
+<pre style="height: 100%">
+&lt;!-- HTML --&gt;
+&lt;div id=pets&gt;
+  &lt;h1&gt;Pets&lt;/h1&gt;
+  &lt;ul&gt;
+    &lt;li&gt;cat
+    &lt;li&gt;dog
+    &lt;li&gt;fish
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div style="float: left; width: 60%;">
+<pre style="height: 100%">
+// example DOM object
+{
+  id : "pets",
+  innerHTML : "&lt;h1&gt;Pets&lt;/h1&gt;&lt;ul&gt;&lt;li&gt;cat...",
+  tag : "div",
+  children : [
+    {
+      innerHTML : "Pets",
+      tag : "h1"
+    },
+    {
+      children : [ ... ],
+      innerHTML : "&lt;li&gt;cat&lt;/li&gt;&lt;li&gt;dog...",
+      tag : "ul"
+    }
+  ]
+}
+
+// NOTE: not complete; just an example
+</pre>
+</div>
+<div style="clear: both"></div>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L05E03 - DOM Manipulation</h3>
+<ul>
+  <li>Modifying DOM properties changes the document elements
+  <li>DOM is painfully inconsistent across browsers; use a library for this stuff
+</ul>
+<section>
+<div style="float: left; width: 40%; margin-right: 15px;">
+<pre style="height: 100%">
+&lt;div id=pets style="color:red"&gt;
+  &lt;h1&gt;Pets&lt;/h1&gt;
+  &lt;ul&gt;
+    &lt;li&gt;cat
+    &lt;li&gt;dog
+    &lt;li&gt;fish
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div style="float: left; width: 55%;">
+<pre style="height: 100%">
+// get the element
+var el = document.getElementById("pets");
+
+// change the text color from red to blue
+el.style.color = "blue";
+
+// use a library instead
+$('#pets').css('color', 'blue');
+</pre>
+</div>
+<div style="clear: both"></div>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L05E04 - DOM Events</h3>
+<ul>
+  <li>The browser exposes events on DOM elements
+  <li>You hook into these events by attaching a JavaScript function to the event
+  <li>DOM is painfully inconsistent across browsers; use a library for this stuff
+</ul>
+<section>
+<div style="float: left; width: 35%; margin-right: 15px;">
+<pre style="height: 100%">
+&lt;div id=pets&gt;
+  &lt;h1&gt;Pets&lt;/h1&gt;
+  &lt;ul&gt;
+    &lt;li&gt;cat
+    &lt;li&gt;dog
+    &lt;li&gt;fish
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div style="float: left; width: 60%;">
+<pre style="height: 100%">
+// get the element
+var el = document.getElementById("pets");
+
+// attach a function for the "onclick "event
+el.onclick = function(event) {
+  alert("You clicked me!");
+  
+  // the object context of this function 
+  // execution is the DOM element
+  console.log(this);
+  
+  // the "event" variable is an object
+  // with information about the event
+  console.log(event);
+};
+
+// use a library instead
+$('div#pets').on('click', function() { ... });
+</pre>
+</div>
+<div style="clear: both"></div>
+</section>
+</article>
+
+
+<article class="smaller">
+<h3>L05E05 - Event Bubbling</h3>
+<ul style="margin-top: 20px">
+  <li>Events against an element bubble up the DOM tree (similar to JS prototype chain)
+  <li>This allows you to capture events for child elements at a higher level
+  <li>Can significantly speed up your app by reducing event handlers
+  <li>Use a library for this.  If your library doesn't support this, user a newer one.
+</ul>
+<section>
+<div style="float: left; width: 35%; margin-right: 15px;">
+<pre style="margin-top: 20px; height: 100%">
+&lt;div id=pets&gt;
+  &lt;h1&gt;Pets&lt;/h1&gt;
+  &lt;ul&gt;
+    &lt;li&gt;cat
+    &lt;li class=doggy&gt;dog
+    &lt;li&gt;fish
+  &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+</div>
+<div style="float: left; width: 60%;">
+<pre style="margin-top: 20px; height: 100%">
+// get the element
+var el = document.getElementById("pets");
+
+// attach a function for the "onclick "event
+el.onclick = function(event) {
+  // check to make sure they clicked on li.doggy
+  if (event.target.tagName.toLowerCase() === 'li'
+      && event.target.className === 'doggy') {
+    alert('Woof woof!');
+  }
+  
+  // the object context of this function 
+  // execution is the "pets" DOM element
+  console.log(this);
+  
+  // but the event object is for the
+  // element that received the click
+  console.log(event);
+};
+</pre>
+</div>
+<div style="clear: both"></div>
+</section>
+</article>
+
+
+<article>
+<h1>Tips From the Trenches</h1>
+</article>
+
+
+<article class="smaller">
+<h3>Never Never</h3>
+<p>Never do these things.  There is always a better way.</p>
+<ul style="margin-top: 20px">
+  <li>Never use <code>eval()</code>
+  <li>Never use <code>setTimeout("string", 1000)</code>
+  <li>Never use <code>with</code>
+  <li>Never do browser detection to check for a feature.
+  <ul style="margin-top: 8px">
+    <li>Do feature detection instead.
+  </ul>
+</ul>
+<h3 style="margin-top: 40px">Almost Never</h3>
+<p>Rarely do these things.  Only when there is no other way.</p>
+<ul style="margin-top: 20px">
+  <li>Don't use <code>document.write()</code> or <code>document.writeln()</code>
+  <li>Don't add to Global Objects' prototype
+  <ul style="margin-top: 8px">
+    <li>Exception: polyfills
+  </ul>
+</ul>
+</article>
+
+
+<article class="smaller">
+<h3>Always Always</h3>
+<p>Always do these things.  There is never a reason not to do them.</p>
+<ul style="margin-top: 20px">
+  <li>Force browsers into standards mode with <code>&lt;!doctype html&gt;</code>
+  <li>Include radix for parseInt <code>parseInt(val, 10)</code>
+  <li>Parse JSON safely
+</ul>    
+<h3 style="margin-top: 40px">Almost Always</h3>
+<p>Always do this stuff.  There are occasional exceptions.</p>
+<ul style="margin-top: 20px;">
+  <li>Do explicit comparisons: <code>===</code> and <code>!==</code>
+  <li>Do not put code directly on the page.  Include it in <code>&lt;script&gt;</code> tags
+  <li>Add event handlers programmatically
+  <li>Use a library to abstract DOM manipulations
+  <li>Use a library to abstract browser objects (ie: XMLHttpRequest)
+</ul>
+</article>
+
+
+<article class="">
+<h3>Misc Recommended</h3>
+<p>Strongly recommended from personal experience.</p>
+<ul class="build">
+  <li>Use pure functions wherever possible
+  <li>Use a linter. I like the <a href="https://developers.google.com/closure/utilities/" target="_blank">Closure Linter</a>
+  <li><code>camelCase</code> for variable names (de facto JS convention)
+  <li>Avoid use of <code class="blue">this</code> where possible
+  <ul>
+    <li>It's invisible
+    <li>It's easy to use incorrectly
+    <li>You can never be 100% confident about what scope your function executes in (ie: <code>call</code>, <code>apply</code>)
+  </ul>
+</ul>
+</article>
+
+
+<article>
+<h1>Further Reading</h1>
+</article>
+
+
+<article>
+  <h3>JavaScript People Worth Listening To</h3>
+  <ul>
+    <li>Douglas Crockford
+    <li>Steve Souders
+    <li>Stoyan Stefanov
+    <li>Paul Irish
+    <li>John Resig
+  </ul>
+</article>
+
+
+<article class="smaller further-reading">
+<h3>Books and References</h3>
+<ul>
+  <li><img src="img/good_parts.jpg" alt="JavaScript: The Good Parts" /> <a href="http://www.amazon.com/gp/product/0596517742/ref=as_li_ss_tl?ie=UTF8&amp;tag=oakmaccom-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0596517742" target="_blank">JavaScript: The Good Parts</a>
+  <li><img src="img/good_parts.jpg" alt="JavaScript: The Good Parts" /> <a href="http://www.amazon.com/gp/product/0596517742/ref=as_li_ss_tl?ie=UTF8&amp;tag=oakmaccom-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0596517742" target="_blank">JavaScript: The Good Parts</a> (read it twice)
+  <li><img src="img/effective-javascript.jpg" alt="Effective JavaScript" /> <a href="http://www.amazon.com/gp/product/0321812182/ref=as_li_ss_tl?ie=UTF8&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0321812182&amp;linkCode=as2&amp;tag=oakmaccom-20" target="_blank">Effective JavaScript</a>
+  <li><img src="img/js_patterns.jpg" alt="JavaScript Patterns" /> <a href="http://www.amazon.com/gp/product/0596806752/ref=as_li_ss_tl?ie=UTF8&amp;tag=oakmaccom-20&amp;linkCode=as2&amp;camp=1789&amp;creative=390957&amp;creativeASIN=0596806752" target="_blank">JavaScript Patterns</a>
+  <li style="margin-top: 40px"><a href="http://www.html5rocks.com/en/tutorials/internals/howbrowserswork/" target="_blank">How Browsers Work</a>
+  <li><a href="http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml" target="_blank">Google JavaScript Style Guide</a>
+  <li><a href="http://developer.yahoo.com/performance/" target="_blank">Yahoo! Exceptional Performance Team</a>
+  <li><a href="http://www.youtube.com/watch?v=WxmcDoAxdoY" target="_blank">Paul Irish - Primitives of HTML5</a>
+</ul>
+</article>
+
+
+<article class="smaller">
+  <h1>Thank you!</h1>
+  <p>Chris Oakman
+  <br />
+  <a href="mailto:chris@oakmac.com">chris@oakmac.com</a>
+  <br /><br />
+  <a href="http://oakmac.com/professional-javascript-short" target="_blank">http://oakmac.com/professional-javascript-short</a>
+  <br />
+  <a href="https://github.com/oakmac/professional-javascript-short" target="_blank">https://github.com/oakmac/professional-javascript-short</a>
+  <br /><br />
+  <a href="https://www.youtube.com/watch?v=NLTqvVBNHPk" target="_blank">Previous recording</a>
+</article>
+
+
+</section>
+<script>
+// a hack to fix the fact that prettyPrint thinks that "last" is a keyword
+window.setTimeout(function() {
+  if (! document.querySelectorAll) return;
+
+  var els = document.querySelectorAll('span.kwd');
+  for (var i = 0; i < els.length; i++) {
+    if (els[i].innerHTML !== 'last') continue;
+
+    els[i].className = 'pln';
+  }
+}, 1000);
+</script>
+</body>
+</html>
