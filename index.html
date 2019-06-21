@@ -135,6 +135,7 @@ console.log( str1.indexOf("z") ); // -1 (z not found)
 console.log( str1.substr(3, 2) ); // "lo"
 
 // NOTE: JavaScript does not have chars, only strings
+//       Strings in JavaScript are immutable
 </pre>
 </section>
 </article>
@@ -149,7 +150,6 @@ var yup  = true;
 var nope = false;
 
 // null
-// NOTE: usually you never assign this
 var never = null;
 
 // undefined is lack of assignment
@@ -387,62 +387,115 @@ console.log( str2 ); // "Bar Bar"
 <section>
 <pre>
 // a simple function
-function add1(a, b) {
-  return a + b;
-};
+function add1 (a, b) {
+  return a + b
+}
 
 // another way of writing the same function
-var add2 = function(a, b) {
-  return a + b;
+var add2 = function (a, b) {
+  return a + b
 };
 
 // execute a function with ()
-var result = add2(3, 2);
-console.log( result ); // 5
+var result = add2(3, 2)
+console.log( result ) // 5
 
 // functions can be the value of an object property
 // when this happens they are often called "methods"
 var obj1 = {
   add : add2,
   subtract : function(a, b) {
-    return a - b;
+    return a - b
   }
 };
 
-console.log( obj1.add(3, 2) ); // 5
-console.log( obj1.subtract(3, 2) ); // 1
+console.log( obj1.add(3, 2) )      // 5
+console.log( obj1.subtract(3, 2) ) // 1
 </pre>
 </section>
 </article>
 
 
+<article class="">
+<h3>Functions: Hoisting</h3>
+<section>
+<pre>
+// named functions will "hoist" to the top of their scope
+// regardless of where they were defined
+
+// this is fine
+foo();
+
+function foo () {
+  // do something...
+}
+
+bar() // error - bar is not defined
+
+var bar = function () {
+  // do something else...
+};
+</pre>
+</section>
+</article>
+
+<article class="smaller">
+<h3>Functions: Variadic</h3>
+<section>
+<pre>
+// Functions can be called with any number of arguments.
+
+// JavaScript does not have default values for function arguments,
+// they must be defined inside the function scope.
+function foo (a, b) {
+  if (typeof a !== 'number') { a = 5 }
+  if (typeof b !== 'number') { b = 5 }
+
+  return a + b
+}
+
+foo(1) // returns 6
+
+// Every function scope comes with an implicit arguments variable
+// that contains the function arguments.
+function bar () {
+  console.log( arguments[0] ) // "Alpha"
+  console.log( arguments[1] ) // "Bravo"
+  console.log( arguments[2] ) // undefined
+}
+
+bar("Alpha", "Bravo")
+</pre>
+</section>
+</article>
+
 <article class="smaller">
 <h3>L03E02 - Functions: Variable Scope</h3>
 <section>
 <pre>
-var a = "apple";
-var func1 = function() {
+var a = "apple"
+var func1 = function () {
   // inner methods have access to outside variables
   // this function has access to variable "a"
 
-  a = "apricot"; // change the value of "a"
-  console.log(a);
-};
-console.log(a); // "apple"
-func1();        // "apricot"
-console.log(a); // "apricot" (the value of "a" was changed inside func1)
+  a = "apricot" // change the value of "a"
+  console.log(a)
+}
+console.log(a) // "apple"
+func1()        // "apricot"
+console.log(a) // "apricot" (the value of "a" was changed inside func1)
 
 
-var b = "banana";
-var func2 = function() {
+var b = "banana"
+var func2 = function () {
   // define variable "b" inside this function
   // completely separate from the "b" defined outside the function
-  var b = "blueberry";
-  console.log(b);
-};
-console.log(b); // "banana"
-func2();        // "blueberry"
-console.log(b); // "banana"
+  var b = "blueberry"
+  console.log(b)
+}
+console.log(b) // "banana"
+func2()        // "blueberry"
+console.log(b) // "banana"
 </pre>
 </section>
 </article>
@@ -453,10 +506,10 @@ console.log(b); // "banana"
 <h3>L03E03 - Functions: Closure</h3>
 <section>
 <pre>
-var counter = (function() {
+var counter = (function () {
 
   // variable "count" is defined inside our function
-  var count = 0;
+  var count = 0
 
   // we return an object with three properties
   // each property is a function that has access to the "count" variable
@@ -466,18 +519,20 @@ var counter = (function() {
     value : function() { return count; }
   };
 
-})(); // execute the function immediately, which returns an object
+})() // execute the function immediately, which returns an object
 
-console.log( counter.value() ); // 0
+console.log( counter.value() ) // 0
 for (var i = 0; i &lt; 6; i++) { // increment 6 times
-  counter.up();
+  counter.up()
 }
-console.log( counter.value() ); // 6
-counter.down();
-console.log( counter.value() ); // 5
+console.log( counter.value() ) // 6
+counter.down()
+console.log( counter.value() ) // 5
 
-// the "count" variable exists in memory, but we do not have direct access to it
-// this is called closure
+// The "count" variable exists in memory, but we do not have direct access to it
+// this is called closure.
+
+// Closure is how encapsulation is done in JavaScript.
 </pre>
 </section>
 </article>
@@ -496,9 +551,9 @@ console.log( counter.value() ); // 5
 <h3>L03E04 - Functions: Execution Context <small>(cont.)</small></h3>
 <section>
 <pre style="margin-top: 20px">
-var printThis = function() {
+function printThis() {
   console.log( this.foo );
-};
+}
 
 var obj1 = {
   foo     : "Level 1",
@@ -604,7 +659,7 @@ console.log( obj2.foo ); // undefined
 <section>
 <pre>
 // circle Constructor
-var Circle = function(radius) {
+function Circle(radius) {
   // use a default radius if the one provided is not valid
   if (typeof radius !== 'number' || radius &lt; 0) {
     radius = 5;
@@ -612,7 +667,7 @@ var Circle = function(radius) {
 
   // assign the radius to this object's context (ie: this)
   this.radius = radius;
-};
+}
 
 // calculate area
 Circle.prototype.area = function() {
@@ -920,17 +975,6 @@ el.onclick = function(event) {
 <h1>Further Reading</h1>
 </article>
 
-
-<article>
-  <h3>JavaScript People Worth Listening To</h3>
-  <ul>
-    <li>Douglas Crockford
-    <li>Steve Souders
-    <li>Stoyan Stefanov
-    <li>Paul Irish
-    <li>John Resig
-  </ul>
-</article>
 
 
 <article class="smaller further-reading">
